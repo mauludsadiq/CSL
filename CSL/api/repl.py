@@ -6,9 +6,9 @@ import json
 vm = CollapseVM()
 vm.init_field()
 
-def handler(event, context):
+def handler(request):  # Vercel Python expects this signature
     try:
-        body = json.loads(event['body'])
+        body = json.loads(request.body.decode())  # decode bytes
         stmt = body.get("stmt", "")
 
         if "::" in stmt:
@@ -24,16 +24,13 @@ def handler(event, context):
             raise ValueError("Invalid input.")
 
         result = vm.execute(parsed_stmt)
-
         return {
             "statusCode": 200,
-            "headers": { "Content-Type": "application/json" },
             "body": json.dumps({ "output": result })
         }
 
     except Exception as e:
         return {
             "statusCode": 500,
-            "headers": { "Content-Type": "application/json" },
             "body": json.dumps({ "error": str(e) })
         }
