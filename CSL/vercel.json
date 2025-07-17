@@ -1,15 +1,13 @@
 {
   "version": 2,
   "builds": [
-    {
-      "src": "api/repl.py",
-      "use": "@vercel/python"
-    }
+    { "src": "index.js", "use": "@vercel/node" }
   ],
   "routes": [
     {
       "src": "/api/repl",
-      "dest": "api/repl.py"
+      "methods": ["GET", "POST"],
+      "dest": "/api/repl.js"
     }
   ]
 }
