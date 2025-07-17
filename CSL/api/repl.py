@@ -1,16 +1,19 @@
 # api/repl.py
 
-from CSL.CollapseVM import CollapseVM
+from CollapseVM import CollapseVM
 import json
 
+# Initialize the VM
 vm = CollapseVM()
 vm.init_field()
 
-def handler(request):  # Vercel Python expects this signature
+# Vercel-compatible handler
+def handler(request):
     try:
-        body = json.loads(request.body.decode())  # decode bytes
+        body = json.loads(request.body)
         stmt = body.get("stmt", "")
 
+        # Parse input
         if "::" in stmt:
             parts = [s.strip() for s in stmt.split("::")]
             parsed_stmt = ("assign", parts[0], parts[1])
@@ -23,6 +26,7 @@ def handler(request):  # Vercel Python expects this signature
         else:
             raise ValueError("Invalid input.")
 
+        # Execute and respond
         result = vm.execute(parsed_stmt)
         return {
             "statusCode": 200,
