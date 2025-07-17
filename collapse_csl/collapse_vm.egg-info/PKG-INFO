@@ -1,0 +1,13 @@
+Metadata-Version: 2.4
+Name: collapse_vm
+Version: 0.1.0
+Summary: Collapse Symbolic Language VM for anchor-based collapse evaluation
+Author: G. Bogans
+Requires-Python: >=3.8
+Requires-Dist: matplotlib
+Requires-Dist: numpy
+Requires-Dist: pandas
+Dynamic: author
+Dynamic: requires-dist
+Dynamic: requires-python
+Dynamic: summary

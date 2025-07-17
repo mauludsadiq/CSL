@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>📊 Validator Chess: Analytics</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="phishing-warning">
+      ⚠️ Verify the URL! Only use https://validator-bloom.vercel.app
+    </div>
+    <h1>📊 Validator Chess: Analytics</h1>
+
+    <div class="chart-container">
+      <h3>Mate Choice Distribution</h3>
+      <canvas id="mateChoiceChart"></canvas>
+    </div>
+
+    <div class="chart-container">
+      <h3>Mate Win Rates</h3>
+      <canvas id="mateWinRateChart"></canvas>
+    </div>
+
+    <div class="chart-container">
+      <h3>Average Completion Times</h3>
+      <canvas id="avgCompletionChart"></canvas>
+    </div>
+
+    <div class="stats-table">
+      <h3>Mate Performance</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Mate Type</th>
+            <th>Avg. Completion Time (s)</th>
+            <th>Win Rate (%)</th>
+          </tr>
+        </thead>
+        <tbody id="matePerformanceBody"></tbody>
+      </table>
+    </div>
+
+    <div class="stats-table">
+      <h3>Recent Tournament Champions</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Tournament ID</th>
+            <th>Champion</th>
+            <th>Final Mate</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody id="recentChampionsBody"></tbody>
+      </table>
+    </div>
+
+    <button onclick="window.location.href='tournament.html'">Back to Tournament</button>
+  </div>
+</body>
+</html>

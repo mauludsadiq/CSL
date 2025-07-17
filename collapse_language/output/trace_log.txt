@@ -1,0 +1,2 @@
+Semantic Collapse Trace:
+[Collapse]^0.4

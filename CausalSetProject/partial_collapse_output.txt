@@ -1,0 +1,23 @@
+✅ Depth-Based Partial Collapse of Causal Set with 50 Events
+
+📚 Events Grouped by Depth Level:
+  • Depth D0: [0, 1, 2, 3, 4] (5 events)
+  • Depth D1: [5, 6, 7, 8, 9, 10, 11, 12] (8 events)
+  • Depth D2: [13, 14, 15, 16, 17, 18, 19, 20, 21] (9 events)
+  • Depth D3: [22, 23, 24, 25, 26, 27, 28, 29, 30] (9 events)
+  • Depth D4: [31, 32, 33, 34, 35, 36, 37, 38, 39] (9 events)
+  • Depth D5: [40, 41, 42, 43, 44, 45, 46, 47, 48, 49] (10 events)
+
+📐 Quotient Causal Set Structure (Clusters D0, D1, ...):
+  Nodes (Clusters): D0, D1, D2, D3, D4, D5
+  Edges Between Clusters (Quotient DAG):
+    D0 → D1
+    D1 → D2
+    D2 → D3
+    D3 → D4
+    D4 → D5
+
+📝 Summary:
+  • Reduced 50 events → 6 clusters.
+  • Depth range: D0 to D5.
+  • Quotient DAG has 5 edges, retaining partial causal order.

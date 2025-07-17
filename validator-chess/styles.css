@@ -1,0 +1,124 @@
+:root {
+  --cream: #F5F1E8;
+  --beige: #E8DFD1;
+  --taupe: #5D473A;
+  --parchment: #FFFCF5;
+  --gold: #C4B49C;
+  --red: #A33C3C;
+}
+
+body {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  background: var(--cream);
+  color: var(--taupe);
+  margin: 0;
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+.container {
+  background: var(--parchment);
+  border-radius: 1rem;
+  padding: 2.5rem;
+  box-shadow: 0 1rem 3rem rgba(0,0,0,0.05);
+  width: 100%;
+}
+
+h1, h3 {
+  font-weight: 500;
+  text-align: center;
+  color: var(--taupe);
+  margin: 0 0 2rem;
+}
+
+.chart-container {
+  background: var(--beige);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  transition: transform 0.2s ease;
+}
+
+.chart-container:hover {
+  transform: translateY(-2px);
+}
+
+canvas {
+  max-width: 100%;
+}
+
+.stats-table, .replay-table, .results-table {
+  background: var(--beige);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--cream);
+  text-align: left;
+}
+
+th {
+  font-weight: 500;
+  color: var(--gold);
+}
+
+.phishing-warning, .error-message {
+  background: #FFD700;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.error-message {
+  background: var(--red);
+  color: white;
+}
+
+.hidden {
+  display: none;
+}
+
+button {
+  font-family: inherit;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  border: none;
+  background: var(--taupe);
+  color: white;
+  cursor: pointer;
+  margin: 1rem auto;
+  display: block;
+  transition: background 0.2s ease;
+}
+
+button:hover {
+  background: var(--gold);
+  transform: translateY(-2px);
+}
+
+.toast {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  background: var(--gold);
+  color: var(--taupe);
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.1);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 1000;
+}
+
+.toast.show {
+  opacity: 1;
+}

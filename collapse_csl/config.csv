@@ -1,0 +1,7 @@
+key,value
+mutate,0.4
+curve,sigmoid
+report,true
+theme,ggplot
+target,42
+format,gif

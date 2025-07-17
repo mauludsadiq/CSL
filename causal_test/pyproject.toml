@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "causal-collapse"
+version = "0.1.0"
+description = "Causal sets sprinkling and collapse morphisms"
+authors = [{name="Your Name", email="your@email.com"}]
+readme = "README.md"
+license = {text="MIT"}
+requires-python = ">=3.8"
+dependencies = [
+    "numpy",
+    "networkx",
+    "matplotlib",
+]
+
+[tool.setuptools]
+packages = ["causal_collapse"]

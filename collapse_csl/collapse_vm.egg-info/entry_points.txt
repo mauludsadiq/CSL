@@ -1,0 +1,2 @@
+[console_scripts]
+collapse-vm = collapse_vm.cli:run
