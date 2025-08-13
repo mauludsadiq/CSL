@@ -1,79 +1,51 @@
-name: Run Tests + Scenarios & Upload Artifacts
+name: Run Tests
 
 on:
   push:
-    branches: [ main ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ main ]
-
-concurrency:
-  group: ci-${{ github.ref }}
-  cancel-in-progress: true
+    branches: [ "main" ]
 
 jobs:
   tests:
-    name: tests (${{ matrix.python-version }})
     runs-on: ubuntu-latest
-    timeout-minutes: 20
     strategy:
       fail-fast: false
       matrix:
         python-version: ["3.10", "3.11", "3.12", "3.13"]
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-          cache: "pip"
 
-      - name: Upgrade pip tooling
-        run: python -m pip install --upgrade pip wheel setuptools
+      - name: Upgrade pip & install build tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install wheel setuptools
 
-      - name: Install dependencies (wheel-only)
-        env:
-          PIP_ONLY_BINARY: ":all:"
-        run: pip install -r requirements.txt
+      - name: Install dependencies
+        run: |
+          if [ "${{ matrix.python-version }}" = "3.13" ]; then
+            # Pin pandas & numpy for Python 3.13 to avoid build issues
+            pip install "numpy<2.0.0" "pandas==2.2.2"
+          fi
+          pip install -r requirements.txt
+          pip install pytest rich
 
-      - name: Run pytest
+      - name: Run all scenarios and validate artifacts
+        run: |
+          make run-all
+          python tools/validate_artifacts.py
+
+      - name: Run tests
         run: pytest -q
 
-  run-scenarios:
-    name: Run Scenarios + Artifacts
-    needs: tests
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up Python 3.12
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-          cache: "pip"
-
-      - name: Upgrade pip tooling
-        run: python -m pip install --upgrade pip wheel setuptools
-
-      - name: Install dependencies (wheel-only)
-        env:
-          PIP_ONLY_BINARY: ":all:"
-        run: pip install -r requirements.txt
-
-      - name: Run all scenarios
-        run: make run-all
-
-      - name: Validate JSON artifacts
-        run: python tools/validate_artifacts.py
-
-      - name: Upload artifacts (CSV + JSON)
+      - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: collapse_artifacts
-          path: artifacts/**
-          if-no-files-found: error
+          name: artifacts-${{ matrix.python-version }}
+          path: artifacts
