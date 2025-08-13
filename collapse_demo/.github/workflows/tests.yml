@@ -1,17 +1,24 @@
-name: Run Tests + Scenarios + Artifacts
+name: Run Tests + Scenarios & Upload Artifacts
 
 on:
   push:
+    branches: [ main ]
   pull_request:
+    branches: [ main ]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  test-matrix:
-    name: CI (3.10–3.12)
+  tests:
+    name: tests (${{ matrix.python-version }})
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.10", "3.11", "3.12"]
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
 
     steps:
       - name: Checkout
@@ -21,50 +28,52 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
+          cache: "pip"
 
-      - name: Install deps (wheel-only)
-        run: |
-          python -m pip install --upgrade pip
-          pip install --only-binary=:all: -r requirements.txt
-          pip install --only-binary=:all: pytest
+      - name: Upgrade pip tooling
+        run: python -m pip install --upgrade pip wheel setuptools
 
-      - name: Run unit tests
+      - name: Install dependencies (wheel-only)
+        env:
+          PIP_ONLY_BINARY: ":all:"
+        run: pip install -r requirements.txt
+
+      - name: Run pytest
         run: pytest -q
 
-      - name: Run scenarios + write artifacts
-        run: |
-          python demo_runner.py --run-all --json --verify
+  run-scenarios:
+    name: Run Scenarios + Artifacts
+    needs: tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
 
-      - name: Validate artifact JSONs
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Upgrade pip tooling
+        run: python -m pip install --upgrade pip wheel setuptools
+
+      - name: Install dependencies (wheel-only)
+        env:
+          PIP_ONLY_BINARY: ":all:"
+        run: pip install -r requirements.txt
+
+      - name: Run all scenarios
+        run: make run-all
+
+      - name: Validate JSON artifacts
         run: python tools/validate_artifacts.py
 
-      - name: Upload artifacts
+      - name: Upload artifacts (CSV + JSON)
         uses: actions/upload-artifact@v4
         with:
-          name: collapse-artifacts-py${{ matrix.python-version }}
-          path: artifacts/
-
-  # Optional: Canary for Python 3.13 (doesn't fail the whole workflow)
-  py313-canary:
-    name: Canary (3.13, allowed to fail)
-    runs-on: ubuntu-latest
-    continue-on-error: true
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.13"
-      - name: Try wheel-only install
-        run: |
-          python -m pip install --upgrade pip
-          pip install --only-binary=:all: -r requirements.txt || true
-          pip install --only-binary=:all: pytest || true
-      - name: Try running (may no-op if deps missing)
-        run: |
-          if python -c "import pandas, numpy" 2>/dev/null; then
-            pytest -q || true
-            python demo_runner.py --run-all --json --verify || true
-            python tools/validate_artifacts.py || true
-          else
-            echo "Skipping runs on 3.13; wheels not available yet."
-          fi
+          name: collapse_artifacts
+          path: artifacts/**
+          if-no-files-found: error
