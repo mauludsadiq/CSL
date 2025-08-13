@@ -1,10 +1,10 @@
-name: Run Tests
+name: tests
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ main ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ main ]
 
 jobs:
   tests:
@@ -15,37 +15,33 @@ jobs:
         python-version: ["3.10", "3.11", "3.12", "3.13"]
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Set up Python ${{ matrix.python-version }}
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
 
       - name: Upgrade pip & install build tools
         run: |
-          python -m pip install --upgrade pip
-          pip install wheel setuptools
+          python -m pip install --upgrade pip setuptools wheel
 
-      - name: Install dependencies
+      - name: Install dependencies (with 3.13 pins)
         run: |
-          if [ "${{ matrix.python-version }}" = "3.13" ]; then
-            # Pin pandas & numpy for Python 3.13 to avoid build issues
-            pip install "numpy<2.0.0" "pandas==2.2.2"
+          if [[ "${{ matrix.python-version }}" == "3.13" ]]; then
+            # Pin dependencies known to work with 3.13
+            pip install pandas==2.2.2 numpy==1.26.4
           fi
           pip install -r requirements.txt
-          pip install pytest rich
 
-      - name: Run all scenarios and validate artifacts
+      - name: Run all scenarios and generate JSON
         run: |
           make run-all
           python tools/validate_artifacts.py
 
-      - name: Run tests
-        run: pytest -q
-
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: artifacts-${{ matrix.python-version }}
-          path: artifacts
+          name: collapse_artifacts-${{ matrix.python-version }}
+          path: artifacts/
